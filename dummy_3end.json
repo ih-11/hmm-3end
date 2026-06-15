@@ -1,20 +1,119 @@
 {
-  "name": "dummy_3end_hmm",
+  "name": "mock",
+  "nt": ["A", "C", "G", "T"],
 
   "states": {
     "coding": {
-      "self_returning": true
+      "initial": 1.0,
+      "terminal": 0.0,
+      "transitions": {
+        "coding": 0.99,
+        "1": 0.01
+      },
+      "emissions": {
+        "A": 0.25,
+        "C": 0.25,
+        "G": 0.25,
+        "T": 0.25
+      }
     },
 
-    "1": {},
-    "2": {},
-    "3": {},
-    "4": {},
-    "5": {},
-    "6": {},
+    "1": {
+      "initial": 0.0,
+      "terminal": 0.0,
+      "transitions": {
+        "2": 1.0
+      },
+      "emissions": {
+        "A": 0.90,
+        "C": 0.03,
+        "G": 0.03,
+        "T": 0.04
+      }
+    },
+
+    "2": {
+      "initial": 0.0,
+      "terminal": 0.0,
+      "transitions": {
+        "3": 1.0
+      },
+      "emissions": {
+        "A": 0.90,
+        "C": 0.03,
+        "G": 0.03,
+        "T": 0.04
+      }
+    },
+
+    "3": {
+      "initial": 0.0,
+      "terminal": 0.0,
+      "transitions": {
+        "4": 1.0
+      },
+      "emissions": {
+        "A": 0.04,
+        "C": 0.03,
+        "G": 0.03,
+        "T": 0.90
+      }
+    },
+
+    "4": {
+      "initial": 0.0,
+      "terminal": 0.0,
+      "transitions": {
+        "5": 1.0
+      },
+      "emissions": {
+        "A": 0.90,
+        "C": 0.03,
+        "G": 0.03,
+        "T": 0.04
+      }
+    },
+
+    "5": {
+      "initial": 0.0,
+      "terminal": 0.0,
+      "transitions": {
+        "6": 1.0
+      },
+      "emissions": {
+        "A": 0.90,
+        "C": 0.03,
+        "G": 0.03,
+        "T": 0.04
+      }
+    },
+
+    "6": {
+      "initial": 0.0,
+      "terminal": 0.0,
+      "transitions": {
+        "genomic": 1.0
+      },
+      "emissions": {
+        "A": 0.90,
+        "C": 0.03,
+        "G": 0.03,
+        "T": 0.04
+      }
+    },
 
     "genomic": {
-      "self_returning": true
+      "initial": 0.0,
+      "terminal": 0.01,
+      "transitions": {
+        "genomic": 0.99
+      },
+      "emissions": {
+        "A": 0.25,
+        "C": 0.25,
+        "G": 0.25,
+        "T": 0.25
+      }
     }
   }
 }

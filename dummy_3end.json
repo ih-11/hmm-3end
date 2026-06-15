@@ -1,0 +1,20 @@
+{
+  "name": "dummy_3end_hmm",
+
+  "states": {
+    "coding": {
+      "self_returning": true
+    },
+
+    "1": {},
+    "2": {},
+    "3": {},
+    "4": {},
+    "5": {},
+    "6": {},
+
+    "genomic": {
+      "self_returning": true
+    }
+  }
+}

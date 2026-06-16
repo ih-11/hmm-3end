@@ -1,6 +1,5 @@
 {
   "name": "mock",
-  "nt": ["A", "C", "G", "T"],
 
   "states": {
     "coding": {
@@ -8,7 +7,7 @@
       "terminal": 0.0,
       "transitions": {
         "coding": 0.99,
-        "1": 0.01
+        "PA1": 0.01
       },
       "emissions": {
         "A": 0.25,
@@ -18,11 +17,11 @@
       }
     },
 
-    "1": {
+    "PA1": {
       "initial": 0.0,
       "terminal": 0.0,
       "transitions": {
-        "2": 1.0
+        "PA2": 1.0
       },
       "emissions": {
         "A": 0.90,
@@ -32,11 +31,11 @@
       }
     },
 
-    "2": {
+    "PA2": {
       "initial": 0.0,
       "terminal": 0.0,
       "transitions": {
-        "3": 1.0
+        "PA3": 1.0
       },
       "emissions": {
         "A": 0.90,
@@ -46,11 +45,11 @@
       }
     },
 
-    "3": {
+    "PA3": {
       "initial": 0.0,
       "terminal": 0.0,
       "transitions": {
-        "4": 1.0
+        "PA4": 1.0
       },
       "emissions": {
         "A": 0.04,
@@ -60,11 +59,11 @@
       }
     },
 
-    "4": {
+    "PA4": {
       "initial": 0.0,
       "terminal": 0.0,
       "transitions": {
-        "5": 1.0
+        "PA5": 1.0
       },
       "emissions": {
         "A": 0.90,
@@ -74,11 +73,11 @@
       }
     },
 
-    "5": {
+    "PA5": {
       "initial": 0.0,
       "terminal": 0.0,
       "transitions": {
-        "6": 1.0
+        "PA6": 1.0
       },
       "emissions": {
         "A": 0.90,
@@ -88,7 +87,7 @@
       }
     },
 
-    "6": {
+    "PA6": {
       "initial": 0.0,
       "terminal": 0.0,
       "transitions": {

@@ -4,3 +4,7 @@ __pycache__/
 
 results/*.tsv
 results/*.txt*.fastq.gz
+<<<<<<< HEAD
+=======
+*.fastq.gz
+>>>>>>> 274fd78 (up)

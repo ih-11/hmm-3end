@@ -1,5 +1,0 @@
-name: 3end
-channels:
-  - conda-forge
-dependencies:
-  - python=3.11

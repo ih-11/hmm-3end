@@ -5,3 +5,4 @@ __pycache__/
 results/*.tsv
 results/*.txt*.fastq.gz
 
+.vscode/

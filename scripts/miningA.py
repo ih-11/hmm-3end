@@ -4,15 +4,25 @@ import argparse
 import gzip
 import re
 
-parse = argparse.ArgumentParser()
-parse.add_argument("fastq", help = "Input FASTQ.gz")
-parse.add_argument("--min-a", type=int, default=15, help="Min Poly-A length")
-parse.add_argument("--up", type=int, default=100, help="Upstream Seq. of Poly-A")
-arg = parse.parse_args()
+parser = argparse.ArgumentParser()
+parser.add_argument("fastq", help="Input FASTQ.gz")
+parser.add_argument("--min-a", type=int, default=15, help="Minimum A/T run length")
+parser.add_argument("--up", type=int, default=100, help="Upstream sequence length")
+parser.add_argument("--tail", choices=["A", "T", "both"], default="A",
+                    help="Tail type to search for")
+args = parser.parse_args()
 
-pattern = re.compile("A", arg.min_a + "+")
+if args.tail == "A":
+    patterns = [("A", re.compile("A" * args.min_a + "+"))]
+elif args.tail == "T":
+    patterns = [("T", re.compile("T" * args.min_a + "+"))]
+else:
+    patterns = [
+        ("A", re.compile("A" * args.min_a + "+")),
+        ("T", re.compile("T" * args.min_a + "+")),
+    ]
 
-with gzip.open(arg.fastq, "rt") as f:
+with gzip.open(args.fastq, "rt") as f:
     while True:
         header = f.readline().strip()
         seq = f.readline().strip()
@@ -22,12 +32,18 @@ with gzip.open(arg.fastq, "rt") as f:
         if not header:
             break
 
-        match = pattern.search(seq)
+        read_id = header.split()[0].replace("@", "")
 
-        if match:
-            start = match.start() - arg.up
-            if start < 0:
-                start = 0
+        for tail_type, pattern in patterns:
+            match = pattern.search(seq)
 
-            outseq = seq[start:]
-            print(outseq)
+            if match:
+                start = match.start() - args.up
+                if start < 0:
+                    start = 0
+
+                outseq = seq[start:]
+
+                print(f">{read_id}_{tail_type}")
+                print(outseq)
+                break

@@ -14,19 +14,9 @@ parser.add_argument("--tail", choices=["A", "T", "both"], default="A", help="Tai
 args = parser.parse_args()
 
 
-if args.tail == "A":
-    patterns = [("A", re.compile("A" * args.min_a + "+"))]
-elif args.tail == "T":
-    patterns = [("T", re.compile("T" * args.min_a + "+"))]
-else:
-    patterns = [
-        ("A", re.compile("A" * args.min_a + "+")),
-        ("T", re.compile("T" * args.min_a + "+"))
-    ]
-
+pattern = re.compile(args.tail * args.min_a + "+")
 
 with gzip.open(args.fastq, "rt") as f:
-
     while True:
         header = f.readline().strip()
         seq = f.readline().strip()
@@ -37,24 +27,19 @@ with gzip.open(args.fastq, "rt") as f:
             break
 
         read_id = header.split()[0].replace("@", "")
+        match = pattern.search(seq)
 
-        for tail_type, pattern in patterns:
-            match = pattern.search(seq)
+        if match:
+            if args.tail == "A":
+                start = match.start() - args.up
+                end = match.end() + args.down
+            else:   
+                start = match.start() - args.down
+                end = match.end() + args.up
+            if start < 0:
+                start = 0
+            if end > len(seq):
+                end = len(seq)
 
-            if match:
-                if tail_type == "A":
-                    start = match.start() - args.up
-                    end = match.end() + args.down
-                else:
-                    start = match.start() - args.down
-                    end = match.end() + args.up
-                if start < 0:
-                    start = 0
-                if end > len(seq):
-                    end = len(seq)
-                outseq = seq[start:end]
-
-                print(f">{read_id}_{tail_type}")
-                print(outseq)
-
-                break
+            print(f">{read_id}")
+            print(seq[start:end])

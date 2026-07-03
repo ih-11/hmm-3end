@@ -9,7 +9,7 @@ parser.add_argument("fastq", help="Input FASTQ.gz")
 parser.add_argument("--min-len", type=int, default=15, help="Minimum A/T run length")
 parser.add_argument("--up", type=int, default=100, help="Upstream sequence length")
 parser.add_argument("--down", type=int, default=20, help="Downstream sequence lenght")
-parser.add_argument("--tail", choices=["A", "T", "both"], default="A", help="Tail type A/T/N")
+parser.add_argument("--tail", choices=["A", "T", "both"], default="A", help="Tail type A/T")
 
 args = parser.parse_args()
 

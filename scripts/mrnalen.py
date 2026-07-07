@@ -1,55 +1,35 @@
 #!/usr/bin/env python3
 
 import argparse
-import gzip
-import pandas as pd
+import statistics
+import korflab
 
-parser = argparse.ArgumentParser()
-parser.add_argument("fasta", help="Input mRNA FASTA file, can be .fa or .fa.gz")
-args = parser.parse_args()
+parser = argparse.ArgumentParser(
+	description='report length stats for mRNA fasta')
+parser.add_argument('fasta', help='input fasta file')
+arg = parser.parse_args()
 
-if args.fasta.endswith(".gz"):
-    open_func = gzip.open
-else:
-    open_func = open
+lens = []
 
-lengths = []
-current_seq = []
+for defline, seq in korflab.readfasta(arg.fasta):
+	lens.append(len(seq))
 
-with open_func(args.fasta, "rt") as f:
-    for line in f:
-        line = line.strip()
+lens_sorted = sorted(lens, reverse=True)
+half = sum(lens_sorted) / 2
 
-        if line.startswith(">"):
-            if current_seq:
-                lengths.append(len("".join(current_seq)))
-            current_seq = []
-        else:
-            current_seq.append(line)
-
-if current_seq:
-    lengths.append(len("".join(current_seq)))
-
-lengths_sorted = sorted(lengths, reverse=True)
-
-total_bases = sum(lengths_sorted)
-half_total_bases = total_bases / 2
-
-running_total = 0
+total = 0
 n50 = None
 
-for length in lengths_sorted:
-    running_total += length
-    if running_total >= half_total_bases:
-        n50 = length
-        break
+for length in lens_sorted:
+	total += length
+	if total >= half:
+		n50 = length
+		break
 
-s = pd.Series(lengths)
-
-print(f"n_mRNAs\t{len(lengths)}")
-print(f"mean_length\t{s.mean():.3f}")
-print(f"stdev_length\t{s.std():.3f}")
-print(f"median_length\t{s.median():.3f}")
-print(f"n50\t{n50}")
-print(f"min_length\t{s.min()}")
-print(f"max_length\t{s.max()}")
+print('n_mRNAs', len(lens), sep='\t')
+print('mean_length', f'{statistics.mean(lens):.3f}', sep='\t')
+print('stdev_length', f'{statistics.stdev(lens):.3f}', sep='\t')
+print('median_length', f'{statistics.median(lens):.3f}', sep='\t')
+print('n50', n50, sep='\t')
+print('min_length', min(lens), sep='\t')
+print('max_length', max(lens), sep='\t')

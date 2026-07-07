@@ -1,45 +1,38 @@
 #!/usr/bin/env python3
 
 import argparse
-import gzip
 import re
+import korflab
 
-parser = argparse.ArgumentParser()
-parser.add_argument("fastq", help="Input FASTQ.gz")
-parser.add_argument("--min-len", type=int, default=15, help="Minimum A/T run length")
-parser.add_argument("--up", type=int, default=100, help="Long side length")
-parser.add_argument("--down", type=int, default=20, help="Short side length")
-parser.add_argument("--tail", choices=["A", "T"], required=True, help="Tail type A/T")
+parser = argparse.ArgumentParser(
+	description='extract sequence around poly-A or poly-T runs')
+parser.add_argument('fastq', help='input fastq file')
+parser.add_argument('--min-len', type=int, default=15,
+	help='minimum A/T run length')
+parser.add_argument('--up', type=int, default=100,
+	help='long side length')
+parser.add_argument('--down', type=int, default=20,
+	help='short side length')
+parser.add_argument('--tail', choices=['A', 'T'], required=True,
+	help='tail type')
+arg = parser.parse_args()
 
-args = parser.parse_args()
+pattern = re.compile(arg.tail * arg.min_len + '+')
 
-pattern = re.compile(args.tail * args.min_len + "+")
+for header, seq, plus, qual in korflab.readfastq(arg.fastq):
+	read_id = header.split()[0]
+	match = pattern.search(seq)
 
-with gzip.open(args.fastq, "rt") as f:
-    while True:
-        header = f.readline().strip()
-        seq = f.readline().strip()
-        plus = f.readline()
-        qual = f.readline()
+	if match:
+		if arg.tail == 'A':
+			beg = match.start() - arg.up
+			end = match.end() + arg.down
+		else:
+			beg = match.start() - arg.down
+			end = match.end() + arg.up
 
-        if not header:
-            break
+		if beg < 0: beg = 0
+		if end > len(seq): end = len(seq)
 
-        read_id = header.split()[0].replace("@", "")
-        match = pattern.search(seq)
-
-        if match:
-            if args.tail == "A":
-                start = match.start() - args.up
-                end = match.end() + args.down
-            else:
-                start = match.start() - args.down
-                end = match.end() + args.up
-
-            if start < 0:
-                start = 0
-            if end > len(seq):
-                end = len(seq)
-
-            print(f">{read_id}")
-            print(seq[start:end])
+		print(f'>{read_id}')
+		print(seq[beg:end])

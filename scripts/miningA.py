@@ -6,7 +6,7 @@ import sys
 import korflab
 
 parser = argparse.ArgumentParser(
-	description='extract sequence around poly-A or poly-T runs')
+	description='extract candidate 3end sequences')
 parser.add_argument('fastq', help='input fastq file')
 parser.add_argument('--min-len', type=int, default=15,
 	help='minimum A/T run length')
@@ -36,25 +36,23 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 
 	if am:
 		beg = am.start() - arg.seq_len
-		end = am.end()
-		run = len(am.group())
 
 		if beg < 0:
 			skipped += 1
 			continue
 
-		outseq = seq[beg:end]
+		outseq = seq[beg:]
+		run = len(am.group())
 
 	elif tm:
-		beg = tm.start()
 		end = tm.end() + arg.seq_len
-		run = len(tm.group())
 
 		if end > len(seq):
 			skipped += 1
 			continue
 
-		outseq = korflab.anti(seq[beg:end])
+		outseq = korflab.anti(seq[:end])
+		run = len(tm.group())
 
 	else:
 		continue

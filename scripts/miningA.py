@@ -6,14 +6,12 @@ import sys
 import korflab
 
 parser = argparse.ArgumentParser(
-	description='extract fixed-length sequence around poly-A or poly-T runs')
+	description='extract sequence around poly-A or poly-T runs')
 parser.add_argument('fastq', help='input fastq file')
 parser.add_argument('--min-len', type=int, default=15,
 	help='minimum A/T run length')
 parser.add_argument('--seq-len', type=int, default=100,
 	help='transcript-side sequence length')
-parser.add_argument('--tail-len', type=int, default=20,
-	help='tail length in output')
 parser.add_argument('--report', type=int, default=0,
 	help='report progress every N reads')
 arg = parser.parse_args()
@@ -38,21 +36,21 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 
 	if am:
 		beg = am.start() - arg.seq_len
-		end = am.start() + arg.tail_len
+		end = am.end()
 		run = len(am.group())
 
-		if beg < 0 or end > len(seq):
+		if beg < 0:
 			skipped += 1
 			continue
 
 		outseq = seq[beg:end]
 
 	elif tm:
-		beg = tm.end() - arg.tail_len
+		beg = tm.start()
 		end = tm.end() + arg.seq_len
 		run = len(tm.group())
 
-		if beg < 0 or end > len(seq):
+		if end > len(seq):
 			skipped += 1
 			continue
 

@@ -23,17 +23,27 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 	tm = tpat.search(seq)
 
 	if am:
+		if am.end() + 1 < len(seq):
+			if seq[am.end() + 1] == 'A':
+				continue
+
 		beg = am.start() - arg.seq_len
 
-		if beg < 0: continue
+		if beg < 0:
+			continue
 
 		outseq = seq[beg:]
 		run = len(am.group())
 
 	elif tm:
+		if tm.end() + 1 < len(seq):
+			if seq[tm.end() + 1] == 'T':
+				continue
+
 		end = tm.end() + arg.seq_len
 
-		if end > len(seq): continue
+		if end > len(seq):
+			continue
 
 		outseq = korflab.anti(seq[:end])
 		run = len(tm.group())

@@ -23,7 +23,7 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 	keep = None
 	if am and tm: keep, status = False, 'both'
 	elif am:      keep, status = True,  'polyA'
-	elif tm:      keep, status = True,  'polyT'
+	elif tm:      keep, status = True,  'polyA'
 	else:         keep, status = False, 'neither'
 
 	if keep and am:

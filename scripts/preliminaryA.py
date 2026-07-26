@@ -21,30 +21,24 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 
 	# The variable 'keep' is called a FLAG
 	keep = None
-	if am and tm: keep = False
-	elif am:      keep = True
-	elif tm:      keep = True
-	else:         keep = False
+	if am and tm: keep, status = False, 'both'
+	elif am:      keep, status = True,  'polyA'
+	elif tm:      keep, status = True,  'polyT'
+	else:         keep, status = False, 'neither'
+
+	if keep and am:
+		beg = am.start() - arg.seq_len
+		if beg < 0: keep, status = False, 'short'
+		else:       outseq, run = seq[beg:am.end()], len(am.group())
+
+	elif keep and tm:
+		end = tm.end() + arg.seq_len
+		if end > len(seq): keep, status = False, 'short'
+		else:              outseq, run = korflab.anti(seq[tm.start():end]), len(tm.group())
 
 	if keep:
-		if am:
-			beg = am.start() - arg.seq_len
-
-			if beg < 0:
-				keep = False
-			else:
-				outseq = seq[beg:am.end()]
-				run = len(am.group())
-
-		elif tm:
-			end = tm.end() + arg.seq_len
-
-			if end > len(seq):
-				keep = False
-			else:
-				outseq = korflab.anti(seq[tm.start():end])
-				run = len(tm.group())
-
-	if keep:
-		print(f'>{read_id} lenA={run} len_read={len(seq)}')
+		print(f'>{read_id} status=keep type={status} lenA={run} len_read={len(seq)}')
 		print(outseq)
+	else:
+		print(f'>{read_id} status=reject reason={status} len_read={len(seq)}')
+		print(seq)

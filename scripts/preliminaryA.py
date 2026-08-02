@@ -8,6 +8,9 @@ parser = argparse.ArgumentParser(description='extract candidate 3end sequences')
 parser.add_argument('fastq', help='input fastq file')
 parser.add_argument('--min-len', type=int, default=15, help='minimum A/T run length')
 parser.add_argument('--seq-len', type=int, default=100, help='transcript-side sequence length')
+parser.add_argument('--adapter',
+	default='CTTGCGGGCGGCGGACTCTCCTCTGAAGATAGAGCGACAGGCAAG',
+	help='CRTA sequence from SQK-PCB114.24')
 arg = parser.parse_args()
 
 apat = re.compile('A' * arg.min_len + '+')
@@ -29,12 +32,19 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 	if keep and am:
 		beg = am.start() - arg.seq_len
 		if beg < 0: keep, status = False, 'short'
-		else:       outseq, run = seq[beg:am.end()], len(am.group())
+		else:
+			outseq, run = seq[beg:am.end()], len(am.group())
+			downstream = seq[am.end():]
 
 	elif keep and tm:
 		end = tm.end() + arg.seq_len
 		if end > len(seq): keep, status = False, 'short'
-		else:              outseq, run = korflab.anti(seq[tm.start():end]), len(tm.group())
+		else:
+			outseq, run = korflab.anti(seq[tm.start():end]), len(tm.group())
+			downstream = korflab.anti(seq[:tm.start()])
+
+	if keep and not downstream.startswith(arg.adapter):
+		keep, status = False, 'adapter'
 
 	if keep:
 		print(f'>{read_id} status=keep type={status} lenA={run} len_read={len(seq)}')

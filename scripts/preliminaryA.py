@@ -21,30 +21,28 @@ for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 
 	am = apat.search(seq)
 	tm = tpat.search(seq)
+	found = bool(am or tm)
+
+	if am and not seq[am.end():].startswith(arg.adapter):                 am = None
+	if tm and not korflab.anti(seq[:tm.start()]).startswith(arg.adapter): tm = None
 
 	# The variable 'keep' is called a FLAG
 	keep = None
 	if am and tm: keep, status = False, 'both'
 	elif am:      keep, status = True,  'polyA'
 	elif tm:      keep, status = True,  'polyA'
+	elif found:   keep, status = False, 'adapter'
 	else:         keep, status = False, 'neither'
 
 	if keep and am:
 		beg = am.start() - arg.seq_len
 		if beg < 0: keep, status = False, 'short'
-		else:
-			outseq, run = seq[beg:am.end()], len(am.group())
-			downstream = seq[am.end():]
+		else:       outseq, run = seq[beg:am.end()], len(am.group())
 
 	elif keep and tm:
 		end = tm.end() + arg.seq_len
 		if end > len(seq): keep, status = False, 'short'
-		else:
-			outseq, run = korflab.anti(seq[tm.start():end]), len(tm.group())
-			downstream = korflab.anti(seq[:tm.start()])
-
-	if keep and not downstream.startswith(arg.adapter):
-		keep, status = False, 'adapter'
+		else:              outseq, run = korflab.anti(seq[tm.start():end]), len(tm.group())
 
 	if keep:
 		print(f'>{read_id} status=keep type={status} lenA={run} len_read={len(seq)}')

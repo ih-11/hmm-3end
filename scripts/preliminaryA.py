@@ -19,7 +19,7 @@ tpat = re.compile('T' * arg.min_len + '+')
 for header, seq, plus, qual in korflab.readfastq(arg.fastq):
 	read_id = header.split()[0]
 
-	am = apat.search(seq)
+	am = apat.(seq)
 	tm = tpat.search(seq)
 	found = bool(am or tm)
 

@@ -27,8 +27,7 @@ params = ' '.join((
 	f'-d {reads_fa}',
 	f'-i {arg.hooks}',
 	f'-a {arg.cpus}',
-	'-r 1 -q -1',
-	'-G 2 -E 1',
+	'-F F',                     # turn off DUST filter
 	f'-e {arg.evalue}',
 	'-m 8',
 ))

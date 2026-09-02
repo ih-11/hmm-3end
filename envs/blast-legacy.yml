@@ -1,0 +1,8 @@
+name: blast
+
+channels:
+  - bioconda
+  - conda-forge
+  
+dependencies:
+  - blast-legacy

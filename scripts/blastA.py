@@ -27,7 +27,8 @@ params = ' '.join((
 	f'-d {reads_fa}',
 	f'-i {arg.hooks}',
 	f'-a {arg.cpus}',
-	'-F F',                     # turn off DUST filter
+	'-F F',                     # turn off DUST filter, hooks are homopolymer-heavy
+	'-S 1',                     # search plus strand of query only, hooks are orientation-specific
 	f'-e {arg.evalue}',
 	'-m 8',
 ))

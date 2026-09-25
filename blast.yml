@@ -1,0 +1,8 @@
+name: blastplus
+
+channels:
+  - bioconda
+  - conda-forge
+  
+dependencies:
+  - blast

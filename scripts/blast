@@ -152,3 +152,24 @@ USAGE
 
 DESCRIPTION
    Nucleotide-Nucleotide BLAST 2.17.0+
+
+how to use
+blastn \
+	-task blastn \
+	-db build/reads.fa \
+	-query data/hooks.fa \
+	-dust no \
+	-evalue 1e-5 \
+	-max_target_seqs 1000000 \
+	-outfmt 0 \
+	> build/blast.txt
+
+blastn \
+	-task blastn \
+	-db build/reads.fa \
+	-query data/hooks.fa \
+	-dust no \
+	-evalue 1e-5 \
+	-max_target_seqs 1000000 \
+	-outfmt 6 \
+	> build/blast.tsv

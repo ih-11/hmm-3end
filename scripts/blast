@@ -173,3 +173,29 @@ blastn \
 	-max_target_seqs 1000000 \
 	-outfmt 6 \
 	> build/blast.tsv
+
+col	name	your value	meaning
+f1	qseqid	polyA_hook	the query = your hook
+f2	sseqid	63e04017-...	the subject = the read
+f3	pident	100.000	percent identity
+f4	length	35	how many letters the alignment covers
+f5	mismatch	0	mismatched letters
+f6	gapopen	0	gaps
+f7	qstart	1	where it starts on the hook
+f8	qend	35	where it ends on the hook
+f9	sstart	548	where it starts on the read
+f10	send	582	where it ends on the read
+f11	evalue	4.30e-13	chance of this by luck
+f12	bitscore	64.4	the score
+
+blastn \
+	-task blastn \
+	-db build/reads.fa \
+	-query data/hooks.fa \
+	-dust no \
+	-evalue 1e-5 \
+	-max_target_seqs 1000000 \
+	-gapopen 2 \
+	-gapextend 1 \
+	-outfmt 6 \
+	> build/blast_gap21.tsv
